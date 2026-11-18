@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gerador de QR Code Grátis — Link, Wi-Fi, WhatsApp, Pix e mais</title>
+  <meta name="description" content="Gerador de QR Code 100% gratuito, sem cadastro e sem marca d'água. Crie QR Codes para links, Wi-Fi, WhatsApp, Pix, e-mail, SMS e cartão de contato. Baixe em PNG ou SVG.">
+  <meta name="theme-color" content="#0d9488">
+  <meta property="og:title" content="Gerador de QR Code Grátis">
+  <meta property="og:description" content="Crie QR Codes para links, Wi-Fi, WhatsApp, Pix e mais. Sem cadastro, sem marca d'água, sem validade.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="top-inner">
+      <a class="brand" href="./" aria-label="QR Grátis — início">
+        <img src="favicon.svg" alt="" width="28" height="28">
+        <span>QR Grátis</span>
+      </a>
+      <a class="gh" href="https://github.com/matheusmcz/gerador-qrcode" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        <span>Código aberto</span>
+      </a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="intro">
+      <h1>Gerador de QR Code grátis</h1>
+      <p>Links, Wi-Fi, WhatsApp, Pix e mais. Sem cadastro, sem marca d'água e sem data de validade — tudo é gerado no seu navegador.</p>
+    </section>
+
+    <div class="grid">
+      <section class="panel" aria-label="Conteúdo do QR Code">
+        <div class="tabs" role="tablist" aria-label="Tipo de QR Code">
+          <button role="tab" data-type="url" aria-selected="true">Link</button>
+          <button role="tab" data-type="text" aria-selected="false">Texto</button>
+          <button role="tab" data-type="wifi" aria-selected="false">Wi-Fi</button>
+          <button role="tab" data-type="whatsapp" aria-selected="false">WhatsApp</button>
+          <button role="tab" data-type="pix" aria-selected="false">Pix</button>
+          <button role="tab" data-type="email" aria-selected="false">E-mail</button>
+          <button role="tab" data-type="tel" aria-selected="false">Telefone</button>
+          <button role="tab" data-type="sms" aria-selected="false">SMS</button>
+          <button role="tab" data-type="vcard" aria-selected="false">Contato</button>
+        </div>
+
+        <form id="form" autocomplete="off" novalidate>
+          <fieldset data-type="url">
+            <label>Endereço do site
+              <input name="url" type="url" inputmode="url" placeholder="https://seusite.com.br" autofocus>
+            </label>
+            <p class="hint">Se você esquecer o <code>https://</code>, a gente coloca para você.</p>
+          </fieldset>
+
+          <fieldset data-type="text" hidden>
+            <label>Texto
+              <textarea name="text" rows="5" placeholder="Qualquer texto: um recado, um código, uma senha de evento…"></textarea>
+            </label>
+          </fieldset>
+
+          <fieldset data-type="wifi" hidden>
+            <label>Nome da rede (SSID)
+              <input name="wifi_ssid" placeholder="MinhaCasa_5G">
+            </label>
+            <label>Senha
+              <input name="wifi_pass" placeholder="Senha da rede">
+            </label>
+            <div class="row">
+              <label>Segurança
+                <select name="wifi_enc">
+                  <option value="WPA">WPA/WPA2/WPA3</option>
+                  <option value="WEP">WEP</option>
+                  <option value="nopass">Sem senha</option>
+                </select>
+              </label>
+              <label class="check"><input type="checkbox" name="wifi_hidden"> Rede oculta</label>
+            </div>
+            <p class="hint">Quem escanear conecta direto, sem digitar a senha.</p>
+          </fieldset>
+
+          <fieldset data-type="whatsapp" hidden>
+            <label>Número com DDD
+              <input name="wa_phone" type="tel" inputmode="tel" placeholder="(11) 91234-5678">
+            </label>
+            <label>Mensagem inicial <span class="opt">opcional</span>
+              <textarea name="wa_msg" rows="3" placeholder="Olá! Vim pelo QR Code."></textarea>
+            </label>
+            <p class="hint">Números brasileiros recebem o +55 automaticamente. Para outro país, comece com + e o código dele.</p>
+          </fieldset>
+
+          <fieldset data-type="pix" hidden>
+            <div class="row">
+              <label>Tipo de chave
+                <select name="pix_type">
+                  <option value="cpf">CPF / CNPJ</option>
+                  <option value="phone">Celular</option>
+                  <option value="email">E-mail</option>
+                  <option value="random">Chave aleatória</option>
+                </select>
+              </label>
+              <label class="grow">Chave Pix
+                <input name="pix_key" placeholder="000.000.000-00">
+              </label>
+            </div>
+            <div class="row">
+              <label class="grow">Nome do recebedor
+                <input name="pix_name" maxlength="25" placeholder="Maria da Silva">
+              </label>
+              <label class="grow">Cidade
+                <input name="pix_city" maxlength="15" placeholder="São Paulo">
+              </label>
+            </div>
+            <div class="row">
+              <label>Valor <span class="opt">opcional</span>
+                <input name="pix_amount" inputmode="decimal" placeholder="0,00">
+              </label>
+              <label class="grow">Descrição <span class="opt">opcional</span>
+                <input name="pix_desc" maxlength="40" placeholder="Pedido 123">
+              </label>
+            </div>
+            <details class="more">
+              <summary>Identificador da transação (txid)</summary>
+              <label>Identificador <span class="opt">opcional, até 25 letras/números</span>
+                <input name="pix_txid" maxlength="25" placeholder="***">
+              </label>
+            </details>
+            <p class="hint">Gera um Pix estático (BR Code) que funciona em qualquer banco. Sem valor, quem paga digita o valor. Confira os dados com um pagamento de teste antes de imprimir.</p>
+          </fieldset>
+
+          <fieldset data-type="email" hidden>
+            <label>Para
+              <input name="email_to" type="email" inputmode="email" placeholder="contato@empresa.com.br">
+            </label>
+            <label>Assunto <span class="opt">opcional</span>
+              <input name="email_subject" placeholder="Orçamento">
+            </label>
+            <label>Mensagem <span class="opt">opcional</span>
+              <textarea name="email_body" rows="3"></textarea>
+            </label>
+          </fieldset>
+
+          <fieldset data-type="tel" hidden>
+            <label>Número de telefone
+              <input name="tel" type="tel" inputmode="tel" placeholder="(11) 3123-4567">
+            </label>
+            <p class="hint">Ao escanear, o celular oferece ligar para o número.</p>
+          </fieldset>
+
+          <fieldset data-type="sms" hidden>
+            <label>Número
+              <input name="sms_phone" type="tel" inputmode="tel" placeholder="(11) 91234-5678">
+            </label>
+            <label>Mensagem <span class="opt">opcional</span>
+              <textarea name="sms_msg" rows="3"></textarea>
+            </label>
+          </fieldset>
+
+          <fieldset data-type="vcard" hidden>
+            <div class="row">
+              <label class="grow">Nome
+                <input name="vc_first" placeholder="Maria">
+              </label>
+              <label class="grow">Sobrenome
+                <input name="vc_last" placeholder="da Silva">
+              </label>
+            </div>
+            <div class="row">
+              <label class="grow">Celular
+                <input name="vc_phone" type="tel" inputmode="tel" placeholder="(11) 91234-5678">
+              </label>
+              <label class="grow">E-mail
+                <input name="vc_email" type="email" inputmode="email" placeholder="maria@empresa.com.br">
+              </label>
+            </div>
+            <div class="row">
+              <label class="grow">Empresa
+                <input name="vc_org" placeholder="Empresa Ltda">
+              </label>
+              <label class="grow">Cargo
+                <input name="vc_title" placeholder="Gerente">
+              </label>
+            </div>
+            <label>Site
+              <input name="vc_url" type="url" inputmode="url" placeholder="https://empresa.com.br">
+            </label>
+            <p class="hint">Ao escanear, o celular oferece salvar o contato na agenda.</p>
+          </fieldset>
+        </form>
+
+        <details class="custom" open>
+          <summary>Personalizar</summary>
+          <div class="custom-body">
+            <div class="row">
+              <label class="color">Cor do código
+                <span class="swatch"><input type="color" name="fg" value="#111827"><output data-for="fg">#111827</output></span>
+              </label>
+              <label class="color">Cor de fundo
+                <span class="swatch"><input type="color" name="bg" value="#ffffff"><output data-for="bg">#FFFFFF</output></span>
+              </label>
+              <label class="check"><input type="checkbox" name="transparent"> Fundo transparente</label>
+            </div>
+
+            <div class="field">
+              <span class="label">Estilo</span>
+              <div class="seg" role="radiogroup" aria-label="Estilo dos pontos">
+                <label><input type="radio" name="style" value="square" checked><span>Quadrado</span></label>
+                <label><input type="radio" name="style" value="rounded"><span>Arredondado</span></label>
+                <label><input type="radio" name="style" value="dots"><span>Pontos</span></label>
+              </div>
+            </div>
+
+            <div class="row">
+              <label>Tamanho do download
+                <select name="size">
+                  <option value="256">Pequeno (~256 px)</option>
+                  <option value="512">Médio (~512 px)</option>
+                  <option value="1024" selected>Grande (~1024 px)</option>
+                  <option value="2048">Impressão (~2048 px)</option>
+                </select>
+              </label>
+              <label>Correção de erros
+                <select name="ecl">
+                  <option value="L">Baixa (7%)</option>
+                  <option value="M" selected>Média (15%)</option>
+                  <option value="Q">Alta (25%)</option>
+                  <option value="H">Máxima (30%)</option>
+                </select>
+              </label>
+            </div>
+
+            <label>Margem: <output data-for="margin">4</output>
+              <input type="range" name="margin" min="0" max="10" value="4">
+            </label>
+
+            <div class="field">
+              <span class="label">Logo no centro <span class="opt">opcional</span></span>
+              <div class="logo-row">
+                <label class="btn ghost file">
+                  <input type="file" name="logo" accept="image/*">
+                  <span>Escolher imagem</span>
+                </label>
+                <img id="logo-thumb" alt="" hidden>
+                <button type="button" class="btn ghost" id="logo-remove" hidden>Remover</button>
+              </div>
+              <p class="hint">Com logo, a correção de erros vai para Máxima automaticamente.</p>
+            </div>
+          </div>
+        </details>
+      </section>
+
+      <aside class="preview" aria-label="Pré-visualização">
+        <div class="sticky">
+          <div class="qr-box" id="qr-box">
+            <canvas id="qr" width="320" height="320" role="img" aria-label="QR Code gerado"></canvas>
+            <div class="empty" id="empty">
+              <svg viewBox="0 0 24 24" width="40" height="40" aria-hidden="true"><path fill="currentColor" d="M3 3h8v8H3V3zm2 2v4h4V5H5zm8-2h8v8h-8V3zm2 2v4h4V5h-4zM3 13h8v8H3v-8zm2 2v4h4v-4H5zm10-2h2v2h-2v-2zm2 2h2v2h-2v-2zm-2 2h2v2h-2v-2zm4 0h2v2h-2v-2zm-2 2h2v2h-2v-2zm2-6h2v2h-2v-2z"/></svg>
+              <p>Preencha os campos ao lado para gerar seu QR Code.</p>
+            </div>
+          </div>
+          <p class="msg" id="msg" role="status" aria-live="polite"></p>
+
+          <div class="actions">
+            <button class="btn primary" id="dl-png" disabled>Baixar PNG</button>
+            <button class="btn" id="dl-svg" disabled>Baixar SVG</button>
+            <button class="btn ghost" id="copy-img" disabled>Copiar imagem</button>
+          </div>
+
+          <div class="pix-copy" id="pix-copy" hidden>
+            <span class="label">Pix Copia e Cola</span>
+            <textarea id="pix-payload" rows="3" readonly></textarea>
+            <button class="btn ghost" id="copy-pix">Copiar código</button>
+          </div>
+
+          <ul class="perks">
+            <li>Grátis para sempre, inclusive uso comercial</li>
+            <li>QR Code estático: nunca expira</li>
+            <li>Nada é enviado a servidores</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="foot">
+    <p>Feito com carinho e código aberto. <a href="https://github.com/matheusmcz/gerador-qrcode" target="_blank" rel="noopener">Veja no GitHub</a>.</p>
+    <p class="small">QR Code é marca registrada da DENSO WAVE INCORPORATED.</p>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="vendor/qrcode.js"></script>
+  <script src="lib.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
