@@ -29,6 +29,23 @@ Tudo roda no navegador: nenhum dado é enviado para servidores.
 
 Dá para abrir direto em um tipo pelo endereço: `#wifi`, `#whatsapp`, `#pix`, `#email`, `#tel`, `#sms`, `#vcard`, `#text`.
 
+## Segurança e privacidade
+
+O site não tem servidor, banco de dados, login nem cookies. Mesmo assim:
+
+- **Nada sai do navegador.** Uma Content-Security-Policy bloqueia qualquer conexão externa
+  (`connect-src 'none'`), então senhas de Wi-Fi, chaves Pix e textos nunca são enviados.
+- **Só roda código do próprio site.** Sem scripts inline, sem CDN, sem rastreadores.
+- **Campos com limite de tamanho** e opções validadas contra listas fixas, também no JavaScript.
+- **Upload de logo restrito:** PNG, JPG, WebP ou SVG de até 2 MB. A imagem é sempre redesenhada
+  como PNG antes de entrar no QR Code, então o arquivo original (inclusive um SVG com código)
+  nunca vai para o SVG exportado.
+- **Uma única dependência**, copiada para o repositório com origem e hash em `vendor/README.md`.
+
+O GitHub Pages não permite configurar cabeçalhos HTTP, por isso a política de segurança vai em
+tags `<meta>`. Cabeçalhos como `X-Frame-Options` e HSTS só são possíveis em outra hospedagem
+(Vercel, Netlify, Cloudflare Pages).
+
 ## Rodando localmente
 
 É um site estático, sem build e sem dependências externas:
@@ -48,6 +65,7 @@ style.css         estilos (tema claro e escuro automáticos)
 lib.js            conteúdo de cada tipo, payload Pix e desenho vetorial
 app.js            interface, pré-visualização e downloads
 vendor/qrcode.js  codificador QR Code (Kazuhiko Arase, licença MIT)
+vendor/README.md  origem e hash da dependência
 ```
 
 ## Licença

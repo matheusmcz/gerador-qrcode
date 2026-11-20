@@ -217,9 +217,46 @@
     pix: buildPix, email: buildEmail, tel: buildTel, sms: buildSms, vcard: buildVcard
   };
 
+  // Limites de tamanho por campo. Também estão no HTML (maxlength), mas são
+  // reaplicados aqui porque o HTML pode ser alterado no navegador.
+  var LIMITS = {
+    url: 2000, text: 2900, wifi_ssid: 32, wifi_pass: 63, wifi_enc: 6,
+    wa_phone: 25, wa_msg: 1000,
+    pix_type: 6, pix_key: 77, pix_name: 25, pix_city: 15, pix_amount: 20, pix_desc: 40, pix_txid: 25,
+    email_to: 254, email_subject: 200, email_body: 1500,
+    tel: 25, sms_phone: 25, sms_msg: 1000,
+    vc_first: 60, vc_last: 60, vc_phone: 25, vc_email: 254, vc_org: 100, vc_title: 100, vc_url: 500
+  };
+  var WIFI_ENC = ['WPA', 'WEP', 'nopass'];
+  var PIX_TYPES = ['cpf', 'phone', 'email', 'random'];
+
+  function sanitizeValues(values) {
+    var out = {};
+    for (var k in LIMITS) {
+      if (!Object.prototype.hasOwnProperty.call(LIMITS, k)) continue;
+      var v = values ? values[k] : undefined;
+      out[k] = typeof v === 'string' ? v.slice(0, LIMITS[k]) : '';
+    }
+    out.wifi_hidden = !!(values && values.wifi_hidden === true);
+    if (WIFI_ENC.indexOf(out.wifi_enc) < 0) out.wifi_enc = 'WPA';
+    if (PIX_TYPES.indexOf(out.pix_type) < 0) out.pix_type = 'cpf';
+    return out;
+  }
+
   function buildContent(type, values) {
-    var fn = builders[type];
-    return fn ? fn(values || {}) : { text: '' };
+    var fn = Object.prototype.hasOwnProperty.call(builders, type) ? builders[type] : null;
+    return fn ? fn(sanitizeValues(values)) : { text: '' };
+  }
+
+  // ---------- Validação e escape para SVG ----------
+
+  function safeColor(value, fallback) {
+    return /^#[0-9a-fA-F]{6}$/.test(String(value)) ? String(value).toLowerCase() : fallback;
+  }
+
+  function escapeXml(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&apos;');
   }
 
   // ---------- Matriz do QR Code ----------
@@ -321,6 +358,9 @@
 
   global.QRApp = {
     buildContent: buildContent,
+    LIMITS: LIMITS,
+    safeColor: safeColor,
+    escapeXml: escapeXml,
     makeMatrix: makeMatrix,
     buildPath: buildPath,
     logoArea: logoArea,

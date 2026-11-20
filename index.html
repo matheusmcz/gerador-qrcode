@@ -3,6 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Segurança: só carrega arquivos do próprio site e não permite nenhuma conexão externa -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; manifest-src 'self'; connect-src 'none'; font-src 'none'; object-src 'none'; media-src 'none'; worker-src 'none'; base-uri 'none'; form-action 'none'; upgrade-insecure-requests">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>Gerador de QR Code Grátis — Link, Wi-Fi, WhatsApp, Pix e mais</title>
   <meta name="description" content="Gerador de QR Code 100% gratuito, sem cadastro e sem marca d'água. Crie QR Codes para links, Wi-Fi, WhatsApp, Pix, e-mail, SMS e cartão de contato. Baixe em PNG ou SVG.">
   <meta name="theme-color" content="#0d9488">
@@ -19,7 +22,7 @@
         <img src="favicon.svg" alt="" width="28" height="28">
         <span>QR Grátis</span>
       </a>
-      <a class="gh" href="https://github.com/matheusmcz/gerador-qrcode" target="_blank" rel="noopener">
+      <a class="gh" href="https://github.com/matheusmcz/gerador-qrcode" target="_blank" rel="noopener noreferrer">
         <svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
         <span>Código aberto</span>
       </a>
@@ -49,23 +52,23 @@
         <form id="form" autocomplete="off" novalidate>
           <fieldset data-type="url">
             <label>Endereço do site
-              <input name="url" type="url" inputmode="url" placeholder="https://seusite.com.br" autofocus>
+              <input name="url" type="url" inputmode="url" placeholder="https://seusite.com.br" autofocus maxlength="2000">
             </label>
             <p class="hint">Se você esquecer o <code>https://</code>, a gente coloca para você.</p>
           </fieldset>
 
           <fieldset data-type="text" hidden>
             <label>Texto
-              <textarea name="text" rows="5" placeholder="Qualquer texto: um recado, um código, uma senha de evento…"></textarea>
+              <textarea name="text" rows="5" placeholder="Qualquer texto: um recado, um código, uma senha de evento…" maxlength="2900"></textarea>
             </label>
           </fieldset>
 
           <fieldset data-type="wifi" hidden>
             <label>Nome da rede (SSID)
-              <input name="wifi_ssid" placeholder="MinhaCasa_5G">
+              <input name="wifi_ssid" placeholder="MinhaCasa_5G" maxlength="32">
             </label>
             <label>Senha
-              <input name="wifi_pass" placeholder="Senha da rede">
+              <input name="wifi_pass" placeholder="Senha da rede" maxlength="63">
             </label>
             <div class="row">
               <label>Segurança
@@ -82,10 +85,10 @@
 
           <fieldset data-type="whatsapp" hidden>
             <label>Número com DDD
-              <input name="wa_phone" type="tel" inputmode="tel" placeholder="(11) 91234-5678">
+              <input name="wa_phone" type="tel" inputmode="tel" placeholder="(11) 91234-5678" maxlength="25">
             </label>
             <label>Mensagem inicial <span class="opt">opcional</span>
-              <textarea name="wa_msg" rows="3" placeholder="Olá! Vim pelo QR Code."></textarea>
+              <textarea name="wa_msg" rows="3" placeholder="Olá! Vim pelo QR Code." maxlength="1000"></textarea>
             </label>
             <p class="hint">Números brasileiros recebem o +55 automaticamente. Para outro país, comece com + e o código dele.</p>
           </fieldset>
@@ -101,7 +104,7 @@
                 </select>
               </label>
               <label class="grow">Chave Pix
-                <input name="pix_key" placeholder="000.000.000-00">
+                <input name="pix_key" placeholder="000.000.000-00" maxlength="77">
               </label>
             </div>
             <div class="row">
@@ -131,59 +134,59 @@
 
           <fieldset data-type="email" hidden>
             <label>Para
-              <input name="email_to" type="email" inputmode="email" placeholder="contato@empresa.com.br">
+              <input name="email_to" type="email" inputmode="email" placeholder="contato@empresa.com.br" maxlength="254">
             </label>
             <label>Assunto <span class="opt">opcional</span>
-              <input name="email_subject" placeholder="Orçamento">
+              <input name="email_subject" placeholder="Orçamento" maxlength="200">
             </label>
             <label>Mensagem <span class="opt">opcional</span>
-              <textarea name="email_body" rows="3"></textarea>
+              <textarea name="email_body" rows="3" maxlength="1500"></textarea>
             </label>
           </fieldset>
 
           <fieldset data-type="tel" hidden>
             <label>Número de telefone
-              <input name="tel" type="tel" inputmode="tel" placeholder="(11) 3123-4567">
+              <input name="tel" type="tel" inputmode="tel" placeholder="(11) 3123-4567" maxlength="25">
             </label>
             <p class="hint">Ao escanear, o celular oferece ligar para o número.</p>
           </fieldset>
 
           <fieldset data-type="sms" hidden>
             <label>Número
-              <input name="sms_phone" type="tel" inputmode="tel" placeholder="(11) 91234-5678">
+              <input name="sms_phone" type="tel" inputmode="tel" placeholder="(11) 91234-5678" maxlength="25">
             </label>
             <label>Mensagem <span class="opt">opcional</span>
-              <textarea name="sms_msg" rows="3"></textarea>
+              <textarea name="sms_msg" rows="3" maxlength="1000"></textarea>
             </label>
           </fieldset>
 
           <fieldset data-type="vcard" hidden>
             <div class="row">
               <label class="grow">Nome
-                <input name="vc_first" placeholder="Maria">
+                <input name="vc_first" placeholder="Maria" maxlength="60">
               </label>
               <label class="grow">Sobrenome
-                <input name="vc_last" placeholder="da Silva">
+                <input name="vc_last" placeholder="da Silva" maxlength="60">
               </label>
             </div>
             <div class="row">
               <label class="grow">Celular
-                <input name="vc_phone" type="tel" inputmode="tel" placeholder="(11) 91234-5678">
+                <input name="vc_phone" type="tel" inputmode="tel" placeholder="(11) 91234-5678" maxlength="25">
               </label>
               <label class="grow">E-mail
-                <input name="vc_email" type="email" inputmode="email" placeholder="maria@empresa.com.br">
+                <input name="vc_email" type="email" inputmode="email" placeholder="maria@empresa.com.br" maxlength="254">
               </label>
             </div>
             <div class="row">
               <label class="grow">Empresa
-                <input name="vc_org" placeholder="Empresa Ltda">
+                <input name="vc_org" placeholder="Empresa Ltda" maxlength="100">
               </label>
               <label class="grow">Cargo
-                <input name="vc_title" placeholder="Gerente">
+                <input name="vc_title" placeholder="Gerente" maxlength="100">
               </label>
             </div>
             <label>Site
-              <input name="vc_url" type="url" inputmode="url" placeholder="https://empresa.com.br">
+              <input name="vc_url" type="url" inputmode="url" placeholder="https://empresa.com.br" maxlength="500">
             </label>
             <p class="hint">Ao escanear, o celular oferece salvar o contato na agenda.</p>
           </fieldset>
@@ -238,13 +241,13 @@
               <span class="label">Logo no centro <span class="opt">opcional</span></span>
               <div class="logo-row">
                 <label class="btn ghost file">
-                  <input type="file" name="logo" accept="image/*">
+                  <input type="file" name="logo" accept="image/png,image/jpeg,image/webp,image/svg+xml,.png,.jpg,.jpeg,.webp,.svg">
                   <span>Escolher imagem</span>
                 </label>
                 <img id="logo-thumb" alt="" hidden>
                 <button type="button" class="btn ghost" id="logo-remove" hidden>Remover</button>
               </div>
-              <p class="hint">Com logo, a correção de erros vai para Máxima automaticamente.</p>
+              <p class="hint">PNG, JPG, WebP ou SVG de até 2 MB. Com logo, a correção de erros vai para Máxima automaticamente.</p>
             </div>
           </div>
         </details>
@@ -284,7 +287,7 @@
   </main>
 
   <footer class="foot">
-    <p>Feito com carinho e código aberto. <a href="https://github.com/matheusmcz/gerador-qrcode" target="_blank" rel="noopener">Veja no GitHub</a>.</p>
+    <p>Feito com carinho e código aberto. <a href="https://github.com/matheusmcz/gerador-qrcode" target="_blank" rel="noopener noreferrer">Veja no GitHub</a>.</p>
     <p class="small">QR Code é marca registrada da DENSO WAVE INCORPORATED.</p>
   </footer>
 

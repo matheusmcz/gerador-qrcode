@@ -30,17 +30,24 @@
     return v;
   }
 
+  // Só aceita valores de listas conhecidas: o HTML pode ser alterado no navegador.
+  function pick(value, allowed, fallback) { return allowed.indexOf(value) >= 0 ? value : fallback; }
+  function clampInt(value, min, max, fallback) {
+    var n = parseInt(value, 10);
+    return isNaN(n) ? fallback : Math.min(max, Math.max(min, n));
+  }
+
   function options() {
-    var style = ($('input[name="style"]:checked', custom) || {}).value || 'square';
-    var ecl = $('select[name="ecl"]', custom).value;
-    if (state.logo && ecl !== 'H') ecl = 'H';
+    var style = pick(($('input[name="style"]:checked', custom) || {}).value, ['square', 'rounded', 'dots'], 'square');
+    var ecl = pick($('select[name="ecl"]', custom).value, ['L', 'M', 'Q', 'H'], 'M');
+    if (state.logo) ecl = 'H';
     return {
-      fg: $('input[name="fg"]', custom).value,
-      bg: $('input[name="bg"]', custom).value,
-      transparent: $('input[name="transparent"]', custom).checked,
+      fg: App.safeColor($('input[name="fg"]', custom).value, '#111827'),
+      bg: App.safeColor($('input[name="bg"]', custom).value, '#ffffff'),
+      transparent: $('input[name="transparent"]', custom).checked === true,
       style: style,
-      size: parseInt($('select[name="size"]', custom).value, 10),
-      margin: parseInt($('input[name="margin"]', custom).value, 10),
+      size: clampInt($('select[name="size"]', custom).value, 128, 2048, 1024),
+      margin: clampInt($('input[name="margin"]', custom).value, 0, 10, 4),
       ecl: ecl
     };
   }
@@ -76,8 +83,8 @@
       var x = (hole.start + o.margin + pad) * g.cell;
       var s = (hole.size - pad * 2) * g.cell;
       var img = state.logo.img;
-      var ratio = Math.min(s / img.naturalWidth, s / img.naturalHeight);
-      var w = img.naturalWidth * ratio, h = img.naturalHeight * ratio;
+      var ratio = Math.min(s / state.logo.w, s / state.logo.h);
+      var w = state.logo.w * ratio, h = state.logo.h * ratio;
       ctx.imageSmoothingQuality = 'high';
       ctx.drawImage(img, x + (s - w) / 2, x + (s - h) / 2, w, h);
     }
@@ -92,14 +99,17 @@
       '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 ' + g.total + ' ' + g.total +
         '" width="' + g.px + '" height="' + g.px + '"' + (o.style === 'square' ? ' shape-rendering="crispEdges"' : '') + '>'
     ];
-    if (!o.transparent) parts.push('<rect width="' + g.total + '" height="' + g.total + '" fill="' + o.bg + '"/>');
-    parts.push('<path fill="' + o.fg + '" fill-rule="evenodd" d="' + App.buildPath(m, o.style, o.margin, !!state.logo) + '"/>');
+    var esc = App.escapeXml;
+    if (!o.transparent) parts.push('<rect width="' + g.total + '" height="' + g.total + '" fill="' + esc(o.bg) + '"/>');
+    parts.push('<path fill="' + esc(o.fg) + '" fill-rule="evenodd" d="' + App.buildPath(m, o.style, o.margin, !!state.logo) + '"/>');
     var hole = App.logoArea(m.n, !!state.logo);
     if (hole && state.logo) {
       var pad = 0.5;
       var x = hole.start + o.margin + pad, s = hole.size - pad * 2;
+      // O logo entra sempre como PNG gerado pelo próprio site (nunca o arquivo original).
+      var href = esc(state.logo.dataUrl);
       parts.push('<image x="' + x + '" y="' + x + '" width="' + s + '" height="' + s +
-        '" preserveAspectRatio="xMidYMid meet" href="' + state.logo.dataUrl + '" xlink:href="' + state.logo.dataUrl + '"/>');
+        '" preserveAspectRatio="xMidYMid meet" href="' + href + '" xlink:href="' + href + '"/>');
     }
     parts.push('</svg>');
     return parts.join('\n');
@@ -230,27 +240,73 @@
   var logoThumb = $('#logo-thumb');
   var logoRemove = $('#logo-remove');
 
+  // Regras do upload: só alguns formatos, até 2 MB, e a imagem é sempre
+  // redesenhada como PNG pequeno antes de ser usada (o arquivo original,
+  // inclusive um SVG com código embutido, nunca vai para o QR Code exportado).
+  var LOGO_TYPES = { 'image/png': 1, 'image/jpeg': 1, 'image/webp': 1, 'image/svg+xml': 1 };
+  var LOGO_EXT = /\.(png|jpe?g|webp|svg)$/i;
+  var LOGO_MAX_BYTES = 2 * 1024 * 1024;
+  var LOGO_MAX_PIXELS = 40 * 1000 * 1000;
+  var LOGO_RASTER = 512;
+  var logoToken = 0;
+
+  function rejectLogo(text) {
+    logoInput.value = '';
+    toast(text);
+  }
+
   logoInput.addEventListener('change', function () {
     var file = logoInput.files && logoInput.files[0];
     if (!file) return;
-    if (!/^image\//.test(file.type)) { toast('Escolha um arquivo de imagem.'); return; }
-    var reader = new FileReader();
-    reader.onload = function () {
-      var img = new Image();
-      img.onload = function () {
-        state.logo = { img: img, dataUrl: reader.result };
-        logoThumb.src = reader.result;
-        logoThumb.hidden = false;
-        logoRemove.hidden = false;
-        update();
-      };
-      img.onerror = function () { toast('Não foi possível abrir essa imagem.'); };
-      img.src = reader.result;
+    if (!LOGO_TYPES[file.type] || !LOGO_EXT.test(file.name || '')) {
+      rejectLogo('Use uma imagem PNG, JPG, WebP ou SVG.');
+      return;
+    }
+    if (file.size > LOGO_MAX_BYTES) {
+      rejectLogo('Imagem grande demais. O limite é 2 MB.');
+      return;
+    }
+    if (file.size === 0) { rejectLogo('Esse arquivo está vazio.'); return; }
+
+    var token = ++logoToken;
+    var url = URL.createObjectURL(file);
+    var img = new Image();
+    img.onload = function () {
+      URL.revokeObjectURL(url);
+      if (token !== logoToken) return;
+      var isSvg = file.type === 'image/svg+xml';
+      var w = img.naturalWidth || (isSvg ? LOGO_RASTER : 0);
+      var h = img.naturalHeight || (isSvg ? LOGO_RASTER : 0);
+      if (!w || !h) { rejectLogo('Não foi possível ler essa imagem.'); return; }
+      if (w * h > LOGO_MAX_PIXELS) { rejectLogo('Imagem com resolução alta demais.'); return; }
+      var scale = Math.min(1, LOGO_RASTER / Math.max(w, h));
+      var cv = document.createElement('canvas');
+      cv.width = Math.max(1, Math.round(w * scale));
+      cv.height = Math.max(1, Math.round(h * scale));
+      var ctx = cv.getContext('2d');
+      ctx.imageSmoothingQuality = 'high';
+      try {
+        ctx.drawImage(img, 0, 0, cv.width, cv.height);
+        var dataUrl = cv.toDataURL('image/png');
+      } catch (e) {
+        rejectLogo('Não foi possível usar essa imagem.');
+        return;
+      }
+      state.logo = { img: cv, w: cv.width, h: cv.height, dataUrl: dataUrl };
+      logoThumb.src = dataUrl;
+      logoThumb.hidden = false;
+      logoRemove.hidden = false;
+      update();
     };
-    reader.readAsDataURL(file);
+    img.onerror = function () {
+      URL.revokeObjectURL(url);
+      if (token === logoToken) rejectLogo('Não foi possível abrir essa imagem.');
+    };
+    img.src = url;
   });
 
   logoRemove.addEventListener('click', function () {
+    logoToken++;
     state.logo = null;
     logoInput.value = '';
     logoThumb.hidden = true;
